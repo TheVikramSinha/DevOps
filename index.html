@@ -77,7 +77,7 @@
         }
         #navigation {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-top: 30px;
         }
@@ -96,10 +96,6 @@
         #next-button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
-        }
-        #prev-button {
-            background-color: #e9ecef;
-            color: #333;
         }
         #result-screen {
             text-align: center;
@@ -180,12 +176,8 @@
             ⏱️ **Time Limit:** You have **30 seconds** per question.
         </div>
         <div class="instruction-item important-note">
-            ⚠️ **Critical:** The timer will start immediately upon clicking 'Start Test' and questions will auto-advance when time runs out. You cannot return to skipped questions once the timer expires.
+            ⚠️ **Critical:** The timer will start immediately upon clicking 'Start Test' and questions will auto-advance when time runs out. **There is no going back.**
         </div>
-        <div class="instruction-item">
-            🔄 **Security:** Answer options are randomized to ensure integrity.
-        </div>
-
         <button id="start-button" onclick="startQuiz()">Start Test</button>
     </div>
     
@@ -208,7 +200,6 @@
         </div>
 
         <div id="navigation">
-            <button id="prev-button" class="nav-button" disabled>← Previous</button>
             <button id="next-button" class="nav-button" disabled>Next →</button>
         </div>
     </div>
@@ -219,235 +210,233 @@
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            [array[i], array[j]] = [array[i], array[j]];
         }
         return array;
     }
 
     const initialQuestions = [
-        // --- 20 Scenario Questions (Same as previous response, truncated for brevity here) ---
-        // (Full list of 20 questions from previous response should be inserted here)
+        // --- 20 Scenario Questions ---
         {
             scenario: "You have a NodeJS API deployed on **AWS ECS Fargate**. Developers report inconsistent high latency and occasional **OOMKilled** errors. The ECS task definition does not specify resource limits.",
             question: "What is the **most immediate** action to stabilize the service and prevent resource hogging?",
             options: [
-                "A. Increase the Fargate instance size (CPU/Memory) for the service.",
-                "B. Implement Kubernetes HPA to automatically scale the tasks based on CPU usage.",
-                "C. Define and set **Memory and CPU Limits** in the ECS Task Definition.",
-                "D. Switch the application base image from Alpine Linux to Ubuntu to improve performance."
+                "Define and set **Memory and CPU Limits** in the ECS Task Definition.",
+                "Increase the Fargate instance size (CPU/Memory) for the service.",
+                "Implement Kubernetes HPA to automatically scale the tasks based on CPU usage.",
+                "Switch the application base image from Alpine Linux to Ubuntu to improve performance."
             ],
-            answerText: "C. Define and set Memory and CPU Limits in the ECS Task Definition."
+            answerText: "Define and set **Memory and CPU Limits** in the ECS Task Definition."
         },
         {
             scenario: "A new feature deployment via your **GitHub Actions CI/CD** pipeline failed. The build stage was successful, but the final deployment step (Terraform `apply`) timed out. The change involves provisioning a new RDS instance.",
             question: "What is the **most likely** cause for a Terraform `apply` timeout when provisioning an RDS database?",
             options: [
-                "A. The GitHub Actions runner ran out of disk space during the deployment.",
-                "B. The state file was locked by another user or process, causing a deadlock.",
-                "C. RDS instance creation often takes longer than the pipeline's default timeout setting (e.g., 5-10 minutes).",
-                "D. The ECR registry was down, preventing the application image from being pulled."
+                "RDS instance creation often takes longer than the pipeline's default timeout setting (e.g., 5-10 minutes).",
+                "The GitHub Actions runner ran out of disk space during the deployment.",
+                "The state file was locked by another user or process, causing a deadlock.",
+                "The ECR registry was down, preventing the application image from being pulled."
             ],
-            answerText: "C. RDS instance creation often takes longer than the pipeline's default timeout setting (e.g., 5-10 minutes)."
+            answerText: "RDS instance creation often takes longer than the pipeline's default timeout setting (e.g., 5-10 minutes)."
         },
         {
             scenario: "Your production infrastructure is entirely provisioned using **Terraform**. A colleague made a manual change directly in the AWS console (e.g., changing a Security Group rule).",
             question: "What command should you run to identify this manual drift and update your local state file **without applying** any changes to AWS?",
             options: [
-                "A. `terraform apply --auto-approve`",
-                "B. `terraform destroy`",
-                "C. `terraform plan`",
-                "D. `terraform import`"
+                "`terraform plan`",
+                "`terraform apply --auto-approve`",
+                "`terraform destroy`",
+                "`terraform import`"
             ],
-            answerText: "C. `terraform plan`"
+            answerText: "`terraform plan`"
         },
         {
             scenario: "You need to automate a daily task: finding all `.log` files older than 7 days in the `/var/app/logs` directory and compressing them into a single archive.",
             question: "Which combination of **Bash commands** should you use?",
             options: [
-                "A. `tar -zcvf archive.tar.gz *.log`",
-                "B. `find /var/app/logs -type f -mtime +7 -name '*.log' -exec rm {} \\;`",
-                "C. `find /var/app/logs -type f -mtime +7 -name '*.log' | xargs tar -czf old_logs.tar.gz`",
-                "D. `grep -r '.log' /var/app/logs | zip logs.zip`"
+                "`find /var/app/logs -type f -mtime +7 -name '*.log' | xargs tar -czf old_logs.tar.gz`",
+                "`tar -zcvf archive.tar.gz *.log`",
+                "`find /var/app/logs -type f -mtime +7 -name '*.log' -exec rm {} \\;`",
+                "`grep -r '.log' /var/app/logs | zip logs.zip`"
             ],
-            answerText: "C. `find /var/app/logs -type f -mtime +7 -name '*.log' | xargs tar -czf old_logs.tar.gz`"
+            answerText: "`find /var/app/logs -type f -mtime +7 -name '*.log' | xargs tar -czf old_logs.tar.gz`"
         },
         {
             scenario: "A high-traffic e-commerce microservice deployed on **AWS EKS** is experiencing intermittent connection errors. You suspect network instability between pods.",
             question: "Which Kubernetes component is responsible for managing the network policies (firewall rules) between Pods in an EKS cluster?",
             options: [
-                "A. Kubelet",
-                "B. CoreDNS",
-                "C. Kubernetes Ingress Controller",
-                "D. Network Policy Controller (often implemented by CNI, like AWS VPC CNI)"
+                "Network Policy Controller (often implemented by CNI, like AWS VPC CNI)",
+                "Kubelet",
+                "CoreDNS",
+                "Kubernetes Ingress Controller"
             ],
-            answerText: "D. Network Policy Controller (often implemented by CNI, like AWS VPC CNI)"
+            answerText: "Network Policy Controller (often implemented by CNI, like AWS VPC CNI)"
         },
         {
             scenario: "You are setting up monitoring for a new API service. You need to track the path and latency of a single request as it passes through the Load Balancer, API Gateway, and two different Lambda functions.",
             question: "Which observability tool/technique is essential for tracking this **end-to-end request flow**?",
             options: [
-                "A. ELK Stack (for centralized logging)",
-                "B. Distributed Tracing (e.g., AWS X-Ray)",
-                "C. CloudWatch Metrics (for resource utilization)",
-                "D. Prometheus and Grafana (for time-series data)"
+                "Distributed Tracing (e.g., AWS X-Ray)",
+                "ELK Stack (for centralized logging)",
+                "CloudWatch Metrics (for resource utilization)",
+                "Prometheus and Grafana (for time-series data)"
             ],
-            answerText: "B. Distributed Tracing (e.g., AWS X-Ray)"
+            answerText: "Distributed Tracing (e.g., AWS X-Ray)"
         },
         {
             scenario: "A new IAM Role needs permission to read data from only one specific S3 bucket (`my-app-data`). The current policy grants `s3:GetObject` permission on `arn:aws:s3:::*`.",
             question: "To enforce the **Principle of Least Privilege**, what is the corrective action?",
             options: [
-                "A. Change the IAM Role to an IAM User instead.",
-                "B. Restrict the `Action` to `s3:GetObject` and change the `Resource` to `arn:aws:s3:::my-app-data/*`.",
-                "C. Remove the IAM role completely and use temporary security credentials.",
-                "D. Add an explicit `Deny` statement for all other S3 buckets."
+                "Restrict the `Action` to `s3:GetObject` and change the `Resource` to `arn:aws:s3:::my-app-data/*`.",
+                "Change the IAM Role to an IAM User instead.",
+                "Remove the IAM role completely and use temporary security credentials.",
+                "Add an explicit `Deny` statement for all other S3 buckets."
             ],
-            answerText: "B. Restrict the Action to s3:GetObject and change the Resource to arn:aws:s3:::my-app-data/*."
+            answerText: "Restrict the `Action` to `s3:GetObject` and change the `Resource` to `arn:aws:s3:::my-app-data/*`."
         },
         {
             scenario: "You are building a Docker image for a Java application. The build process requires the JDK, but the final runtime only needs the JRE. Using a single image results in a large image size.",
             question: "What is the best Docker technique to minimize the size of the final production image?",
             options: [
-                "A. Using the `--squash` flag during the build process.",
-                "B. Implementing a **Multi-Stage Build**.",
-                "C. Storing temporary files in a volume outside the container.",
-                "D. Using the `ADD` instruction instead of `COPY`."
+                "Implementing a **Multi-Stage Build**.",
+                "Using the `--squash` flag during the build process.",
+                "Storing temporary files in a volume outside the container.",
+                "Using the `ADD` instruction instead of `COPY`."
             ],
-            answerText: "B. Implementing a Multi-Stage Build."
+            answerText: "Implementing a **Multi-Stage Build**."
         },
         {
             scenario: "Your deployment strategy for a critical, stateful microservice is currently a simple **Rolling Update** on Kubernetes. You need a method to minimize downtime and provide an instant rollback capability if a failure is detected.",
             question: "Which advanced deployment strategy best meets these requirements?",
             options: [
-                "A. Canary Deployment",
-                "B. Blue/Green Deployment",
-                "C. A/B Testing",
-                "D. Feature Flags"
+                "Blue/Green Deployment",
+                "Canary Deployment",
+                "A/B Testing",
+                "Feature Flags"
             ],
-            answerText: "B. Blue/Green Deployment"
+            answerText: "Blue/Green Deployment"
         },
         {
             scenario: "A developer is experiencing a recurring bug in a Python service only when it runs inside its container on a development machine. The service works fine locally on the host machine.",
             question: "What is the **most likely** cause, and how would you recommend they debug the Python process running inside the container?",
             options: [
-                "A. The host machine is corrupt. Reinstall the OS.",
-                "B. The container is missing a crucial dependency (e.g., a library or environment variable). Debug using `docker exec -it <container> bash`.",
-                "C. Docker is incorrectly NATing the network traffic to the container.",
-                "D. The local service uses a different Python version than the one specified in the Dockerfile."
+                "The container is missing a crucial dependency (e.g., a library or environment variable). Debug using `docker exec -it <container> bash`.",
+                "The host machine is corrupt. Reinstall the OS.",
+                "Docker is incorrectly NATing the network traffic to the container.",
+                "The local service uses a different Python version than the one specified in the Dockerfile."
             ],
-            answerText: "B. The container is missing a crucial dependency (e.g., a library or environment variable). Debug using `docker exec -it <container> bash`."
+            answerText: "The container is missing a crucial dependency (e.g., a library or environment variable). Debug using `docker exec -it <container> bash`."
         },
         {
             scenario: "You are using **Prometheus and Grafana**. You need to set up a rule that sends an email alert when the node CPU utilization exceeds 85% for more than 5 minutes.",
             question: "Which component of the Prometheus ecosystem is responsible for processing these alert rules and sending notifications?",
             options: [
-                "A. Grafana itself (via native alerts)",
-                "B. Prometheus Pushgateway",
-                "C. **Alertmanager**",
-                "D. Node Exporter"
+                "**Alertmanager**",
+                "Grafana itself (via native alerts)",
+                "Prometheus Pushgateway",
+                "Node Exporter"
             ],
-            answerText: "C. Alertmanager"
+            answerText: "**Alertmanager**"
         },
         {
             scenario: "A new engineer launches an **AWS EC2** instance in a public subnet with a default Security Group. The service is running on port 80, but they cannot access it from their web browser.",
             question: "Assuming the instance has a public IP, what is the **most common** reason for this connection failure?",
             options: [
-                "A. The instance is not properly tagged for cost allocation.",
-                "B. The **Security Group** is not configured to allow inbound traffic on port 80.",
-                "C. The application is running as a non-root user.",
-                "D. They need to set up a new NAT Gateway."
+                "The **Security Group** is not configured to allow inbound traffic on port 80.",
+                "The instance is not properly tagged for cost allocation.",
+                "The application is running as a non-root user.",
+                "They need to set up a new NAT Gateway."
             ],
-            answerText: "B. The Security Group is not configured to allow inbound traffic on port 80."
+            answerText: "The **Security Group** is not configured to allow inbound traffic on port 80."
         },
         {
             scenario: "Your team is adopting a **GitOps** workflow for EKS deployments.",
             question: "Which statement accurately describes the core mechanism of GitOps?",
             options: [
-                "A. Developers manually push code changes to ECR, and then run `kubectl apply` from their machine.",
-                "B. The CI pipeline builds the image and then **pushes** the new Kubernetes manifest to the cluster.",
-                "C. A tool (like ArgoCD or Flux) **pulls** the desired state (manifests) from the Git repository and applies it to the cluster.",
-                "D. All infrastructure is written in YAML instead of Terraform."
+                "A tool (like ArgoCD or Flux) **pulls** the desired state (manifests) from the Git repository and applies it to the cluster.",
+                "Developers manually push code changes to ECR, and then run `kubectl apply` from their machine.",
+                "The CI pipeline builds the image and then **pushes** the new Kubernetes manifest to the cluster.",
+                "All infrastructure is written in YAML instead of Terraform."
             ],
-            answerText: "C. A tool (like ArgoCD or Flux) **pulls** the desired state (manifests) from the Git repository and applies it to the cluster."
+            answerText: "A tool (like ArgoCD or Flux) **pulls** the desired state (manifests) from the Git repository and applies it to the cluster."
         },
         {
             scenario: "You need to retrieve the password for a database that is securely stored in **AWS Secrets Manager**. The application running on EC2 needs this secret.",
             question: "What is the most secure method for the EC2 application to access the secret?",
             options: [
-                "A. Store the secret in an environment variable on the EC2 instance.",
-                "B. Hardcode the secret in the application code but encrypt it first.",
-                "C. Assign an **IAM Role** to the EC2 instance that grants permission to read the specific secret.",
-                "D. Use an encrypted S3 bucket to store a configuration file containing the secret."
+                "Assign an **IAM Role** to the EC2 instance that grants permission to read the specific secret.",
+                "Store the secret in an environment variable on the EC2 instance.",
+                "Hardcode the secret in the application code but encrypt it first.",
+                "Use an encrypted S3 bucket to store a configuration file containing the secret."
             ],
-            answerText: "C. Assign an **IAM Role** to the EC2 instance that grants permission to read the specific secret."
+            answerText: "Assign an **IAM Role** to the EC2 instance that grants permission to read the specific secret."
         },
         {
             scenario: "You've successfully created a Docker image and pushed it to **ECR**. Now you need to update an existing Kubernetes Deployment to use this new image.",
             question: "What is the most direct and idiomatic Kubernetes command to roll out this new image version?",
             options: [
-                "A. `kubectl update image deployment/app-deployment --image=my-image:latest`",
-                "B. `kubectl set image deployment/app-deployment <container-name>=<ecr-repo>/my-image:v2.0`",
-                "C. `kubectl rollback deployment/app-deployment`",
-                "D. `kubectl apply -f deployment.yaml --force`"
+                "`kubectl set image deployment/app-deployment <container-name>=<ecr-repo>/my-image:v2.0`",
+                "`kubectl update image deployment/app-deployment --image=my-image:latest`",
+                "`kubectl rollback deployment/app-deployment`",
+                "`kubectl apply -f deployment.yaml --force`"
             ],
-            answerText: "B. `kubectl set image deployment/app-deployment <container-name>=<ecr-repo>/my-image:v2.0`"
+            answerText: "`kubectl set image deployment/app-deployment <container-name>=<ecr-repo>/my-image:v2.0`"
         },
         {
             scenario: "The CTO is concerned about the high cost of **AWS RDS Multi-AZ** deployments, which are required for high availability. The database load is mostly stable.",
             question: "What is the most cost-effective long-term strategy for maintaining a stable RDS instance with predictable load?",
             options: [
-                "A. Switch to a non-relational database like DynamoDB.",
-                "B. Use **AWS Reserved Instances (RIs)** or **Savings Plans** for the RDS family.",
-                "C. Implement aggressive autoscaling policies for the RDS instance.",
-                "D. Move the database to a single-AZ deployment and rely on manual backups."
+                "Use **AWS Reserved Instances (RIs)** or **Savings Plans** for the RDS family.",
+                "Switch to a non-relational database like DynamoDB.",
+                "Implement aggressive autoscaling policies for the RDS instance.",
+                "Move the database to a single-AZ deployment and rely on manual backups."
             ],
-            answerText: "B. Use **AWS Reserved Instances (RIs)** or **Savings Plans** for the RDS family."
+            answerText: "Use **AWS Reserved Instances (RIs)** or **Savings Plans** for the RDS family."
         },
         {
             scenario: "You are debugging a performance issue in a microservice where **CPU utilization frequently spikes** to 100% just before service degradation. You suspect it's a code issue, not resource exhaustion.",
             question: "Which type of tool or analysis would provide the most detailed insight into which function or line of code is consuming the CPU?",
             options: [
-                "A. Centralized log analysis (ELK)",
-                "B. **Code Profiler** (e.g., Node.js/Python profiler)",
-                "C. AWS CloudWatch Metrics (only provides utilization rate)",
-                "D. Network packet sniffing (tcpdump)"
+                "**Code Profiler** (e.g., Node.js/Python profiler)",
+                "Centralized log analysis (ELK)",
+                "AWS CloudWatch Metrics (only provides utilization rate)",
+                "Network packet sniffing (tcpdump)"
             ],
-            answerText: "B. **Code Profiler** (e.g., Node.js/Python profiler)"
+            answerText: "**Code Profiler** (e.g., Node.js/Python profiler)"
         },
         {
             scenario: "Your team uses **Helm** to manage Kubernetes releases. A recent release introduced a bug, and you need to revert to the previous working configuration.",
             question: "What is the standard Helm command to quickly and safely revert to the previously deployed chart version?",
             options: [
-                "A. `helm delete <release-name>`",
-                "B. `kubectl rollout undo deployment/<name>`",
-                "C. `helm rollback <release-name> <revision-number>`",
-                "D. `helm upgrade --force <release-name>`"
+                "`helm rollback <release-name> <revision-number>`",
+                "`helm delete <release-name>`",
+                "`kubectl rollout undo deployment/<name>`",
+                "`helm upgrade --force <release-name>`"
             ],
-            answerText: "C. `helm rollback <release-name> <revision-number>`"
+            answerText: "`helm rollback <release-name> <revision-number>`"
         },
         {
             scenario: "You need to write a **CloudFormation** template that depends on the public IP address of an EC2 instance created in another, separate CloudFormation stack.",
             question: "What is the native CloudFormation mechanism used to securely pass output values between stacks?",
             options: [
-                "A. Using **S3** as a common storage point for IP addresses.",
-                "B. Hardcoding the IP address into the dependent template.",
-                "C. Using **CloudFormation Exports/Imports**.",
-                "D. Using a Lambda function to manually retrieve the IP."
+                "Using **CloudFormation Exports/Imports**.",
+                "Using **S3** as a common storage point for IP addresses.",
+                "Hardcoding the IP address into the dependent template.",
+                "Using a Lambda function to manually retrieve the IP."
             ],
-            answerText: "C. Using **CloudFormation Exports/Imports**."
+            answerText: "Using **CloudFormation Exports/Imports**."
         },
         {
             scenario: "An engineer reports that a new EC2 instance in a private subnet cannot download dependencies from the internet, but the application requires outbound internet access.",
             question: "Which VPC component is required to allow instances in the private subnet to initiate **outbound** connections to the public internet?",
             options: [
-                "A. A **Bastion Host** (or Jump Box).",
-                "B. An **Internet Gateway (IGW)** attached to the VPC.",
-                "C. A **NAT Gateway** or **NAT Instance**.",
-                "D. An **Endpoint Gateway** for S3."
+                "A **NAT Gateway** or **NAT Instance**.",
+                "A **Bastion Host** (or Jump Box).",
+                "An **Internet Gateway (IGW)** attached to the VPC.",
+                "An **Endpoint Gateway** for S3."
             ],
-            answerText: "C. A **NAT Gateway** or **NAT Instance**."
+            answerText: "A **NAT Gateway** or **NAT Instance**."
         }
-        // --- End of Questions ---
     ];
 
     // --- Data Preparation: Match Answer Index to Randomized Options ---
@@ -474,17 +463,14 @@
     const quizContent = document.getElementById('quiz-content');
     const resultScreen = document.getElementById('result-screen');
     const nextButton = document.getElementById('next-button');
-    const prevButton = document.getElementById('prev-button');
     const progressFill = document.getElementById('progress-fill');
     const timeLeftSpan = document.getElementById('time-left');
     const totalQuestions = questions.length;
 
     // --- Core Function to Start Quiz ---
-    function startQuiz() {
+    window.startQuiz = function() {
         startScreen.style.display = 'none';
         quizInterface.style.display = 'block';
-        
-        // Render the first question and start the timer
         renderQuestion(currentQuestionIndex);
     }
 
@@ -500,7 +486,6 @@
 
             if (timeRemaining <= 0) {
                 clearInterval(timerInterval);
-                // Auto-advance logic: If not answered, mark as unanswered (null)
                 if (currentQuestionIndex < totalQuestions - 1) {
                     currentQuestionIndex++;
                     renderQuestion(currentQuestionIndex);
@@ -545,11 +530,11 @@
         
         setTimeout(() => { questionElement.classList.add('active'); }, 10); 
         
-        // Only restart the timer if we are moving forward or starting
-        if (index >= userAnswers.findIndex(a => a === null) || index === 0) {
+        // Always restart the timer when moving to a new question
+        if (index >= userAnswers.findIndex(a => a === null)) {
              startTimer();
         } else {
-             timeLeftSpan.textContent = '--'; // On manual back navigation
+             timeLeftSpan.textContent = '--'; 
         }
 
         updateNavigation();
@@ -557,7 +542,7 @@
         highlightSelectedAnswer(index);
     }
 
-    // --- Answer Handling and Navigation Updates (Same as previous, omitted for brevity) ---
+    // --- Answer Handling and Navigation Updates ---
 
     function handleOptionClick(event) {
         const button = event.target.closest('.option-button');
@@ -567,7 +552,8 @@
         const optionsGroup = button.closest('.options-group');
         optionsGroup.querySelectorAll('.option-button').forEach(btn => btn.classList.remove('selected'));
         button.classList.add('selected');
-        updateNavigation();
+        // FIX: Call updateNavigation immediately after an answer is selected
+        updateNavigation(); 
     }
 
     function highlightSelectedAnswer(index) {
@@ -584,9 +570,8 @@
     }
 
     function updateNavigation() {
-        const isAnswered = userAnswers[currentQuestionIndex] !== null;
-
-        prevButton.disabled = currentQuestionIndex === 0;
+        // This check is now robust and runs whenever an answer is clicked
+        const isAnswered = userAnswers[currentQuestionIndex] !== null; 
 
         if (currentQuestionIndex < totalQuestions - 1) {
             nextButton.textContent = 'Next →';
@@ -611,7 +596,8 @@
     }
 
     function updateProgress() {
-        const progress = ((currentQuestionIndex + (userAnswers[currentQuestionIndex] !== null ? 1 : 0)) / totalQuestions) * 100;
+        const answeredCount = userAnswers.filter(a => a !== null).length;
+        const progress = (answeredCount / totalQuestions) * 100;
         progressFill.style.width = `${progress}%`;
     }
 
@@ -626,18 +612,16 @@
     }
 
     function showResults() {
-        // Stop timer
         clearInterval(timerInterval);
-        
         const finalScore = calculateScore();
         const percentage = Math.round((finalScore / totalQuestions) * 100);
         
         let feedback = '';
-        if (percentage >= 90) {
+        if (percentage >= 95) {
             feedback = "Outstanding! You demonstrate expert-level knowledge in DevOps principles and practical scenarios.";
-        } else if (percentage >= 70) {
+        } else if (percentage >= 85) {
             feedback = "Very strong! You have a solid grasp of core DevOps and architecture concepts.";
-        } else if (percentage >= 50) {
+        } else if (percentage >= 75) {
             feedback = "Good foundation. Focus on deeper experience in IaC, Kubernetes, and monitoring tools.";
         } else {
             feedback = "Further study is recommended in AWS security and advanced orchestration techniques.";
@@ -652,17 +636,6 @@
         document.getElementById('final-score').textContent = `${finalScore} / ${totalQuestions}`;
         document.getElementById('performance-feedback').textContent = feedback;
     }
-
-    prevButton.addEventListener('click', () => {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            renderQuestion(currentQuestionIndex);
-        }
-    });
-
-    // --- Initialization: We don't call renderQuestion here, we wait for startQuiz() ---
-    // The initial state is handled by the HTML/CSS displaying the start-screen.
-
 </script>
 
 </body>
