@@ -164,7 +164,7 @@
 <div id="quiz-container">
     
     <div id="start-screen">
-        <h1>DevOps Scenario Assessment</h1>
+        <h1>DevOps Assessment</h1>
         <p style="margin-top: 20px; font-size: 1.2em;">Welcome to the timed technical assessment. Please read the instructions carefully before starting.</p>
         
         <hr style="margin: 25px 0;">
@@ -178,6 +178,7 @@
         <div class="instruction-item important-note">
             ⚠️ **Critical:** The timer will start immediately upon clicking 'Start Test' and questions will auto-advance when time runs out. **There is no going back.**
         </div>
+
         <button id="start-button" onclick="startQuiz()">Start Test</button>
     </div>
     
@@ -192,7 +193,7 @@
         
         <div id="result-screen" style="display: none;">
             <h2>Assessment Complete! 🎉</h2>
-            <p style="font-size: 1.2em;">You have successfully completed the DevOps Scenario Assessment.</p>
+            <p style="font-size: 1.2em;">You have successfully completed the DevOps Assessment.</p>
             <p style="font-size: 1.5em; margin-top: 20px;">Your Score:</p>
             <p id="final-score" style="font-size: 3em; font-weight: bold; color: #007bff;">--/--</p>
             <p id="performance-feedback" style="font-size: 1.1em; color: #555;"></p>
@@ -440,7 +441,8 @@
     ];
 
     // --- Data Preparation: Match Answer Index to Randomized Options ---
-    const questions = initialQuestions.map(q => {
+    const shuffledInitialQuestions = shuffleArray(initialQuestions);
+    const questions = shuffledInitialQuestions.map(q => {
         const indexedOptions = q.options.map((text) => ({ text: text, isCorrect: text === q.answerText }));
         const shuffledOptions = shuffleArray(indexedOptions);
         const newAnswerIndex = shuffledOptions.findIndex(opt => opt.isCorrect);
@@ -618,11 +620,11 @@
         
         let feedback = '';
         if (percentage >= 95) {
-            feedback = "Outstanding! You demonstrate expert-level knowledge in DevOps principles and practical scenarios.";
+            feedback = "Expert! Exceptional mastery of all domains (IaC, CI/CD, Containers, and Cloud Architecture).";
         } else if (percentage >= 85) {
-            feedback = "Very strong! You have a solid grasp of core DevOps and architecture concepts.";
+            feedback = "Very Strong! Solid mastery of DevOps tools and practices, with a strong ability to solve common scenarios.";
         } else if (percentage >= 75) {
-            feedback = "Good foundation. Focus on deeper experience in IaC, Kubernetes, and monitoring tools.";
+            feedback = "Good Foundation! You understand core DevOps concepts and tools. Focus on deeper experience in IaC, Kubernetes, and monitoring tools.";
         } else {
             feedback = "Further study is recommended in AWS security and advanced orchestration techniques.";
         }
